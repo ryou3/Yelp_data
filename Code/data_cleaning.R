@@ -1,41 +1,18 @@
+if (!require("stringr")) {install.packages("stringr"); stopifnot(require("stringr")) }
+if (!require("ggplot2")) {install.packages("ggplot2");stopifnot(require("ggplot2")) }
+if (!require("dplyr")) {install.packages("dplyr");stopifnot(require("dplyr")) }
 
-if (!require("stringr")) {
-  install.packages("stringr") 
-  stopifnot(require("stringr")) 
-}
-if (!require("ggplot2")) {
-  install.packages("ggplot2") 
-  stopifnot(require("ggplot2")) 
-}
-if (!require("jsonlite")) {
-  install.packages("stringr") 
-  stopifnot(require("stringr")) 
-}
-if (!require("dplyr")) {
-  install.packages("stringr") 
-  stopifnot(require("stringr")) 
-}
-if (!require("rpart")) {
-  install.packages("stringr") 
-  stopifnot(require("stringr")) 
-}
+rm(list = ls())
 
-
-#rm(list = ls())
-
-setwd("/Users/miaoxinran/Documents/WISC/威斯康星课程/628/Module\ 3/xm_pre")
 ## read the data and change to data frame
 
-business_bars = read.csv('bars.csv')
-dim(business_bars)
-sub_business_bars = business_bars[,c(1:3,16:30)]
+business_bars = read.csv('../Data/bars.csv')
 apply(sub_business_bars,1,function(row){
   sapply(row, function(col){col==''})%>% sum >=1
 }) %>% sum
 #  2371
 
 # Data Cleaning ####
-# 只考虑了到42列的attributes
 business_bars_cleaned = business_bars
 # Attributes with True/False already ####
 goodAttributes = c("BusinessAcceptsCreditCards",'BikeParking',
@@ -59,10 +36,9 @@ for (attr in goodAttributes) {
   business_bars_cleaned[,attr] = sapply(business_bars_cleaned[,attr],string2bool)%>% unlist
   
 }
-head(business_bars_cleaned)
+# Next, process attributes that haven't been considered one by one.
 
-# BusinessParking ####
-dict2vector = function(x){
+ dict2vector = function(x){
   y = str_split(x,'\'|:|\\{|\\}| |,',simplify = TRUE) 
   y = y[y!='']
   keys = y[(y!='True') & (y!='False') & (y!='None')]
@@ -75,6 +51,12 @@ dict2vector = function(x){
 
 
 one2more = function(column,from = 1){
+  # Input column: One column in the `business_bars` dataframe, 
+  #               with values in a string of a python dictionary form.
+  # Input from: The location where we should start converting this column.
+  #             If the first value is NA, then it's needed to set this argument manually.
+  # Output df: A dataframe with columns indicating keys of python dictionary.
+
   column = sapply(column, string2bool)
   df =dict2vector(column[from])
   for(i in (1:length(column))){
@@ -101,6 +83,7 @@ one2more = function(column,from = 1){
   return(df)
 }
 
+# BusinessParking ####
 BusinessParking = one2more(business_bars$BusinessParking)
 BusinessParking = apply(BusinessParking,1,sum)
 BusinessParking = sapply(BusinessParking, function(x){
@@ -111,9 +94,9 @@ BusinessParking = sapply(BusinessParking, function(x){
   }else{ 
     return("NO")}
 })
-BusinessParking
+
+  
 # WiFi ####
-business_bars$WiFi
 WiFi = sapply(business_bars$WiFi,function(x){
   if(str_detect(x,'free')){
     return('free')
@@ -127,7 +110,6 @@ names(WiFi) = NULL
 
 
 # Ambience ####
-dict2vector( business_bars$Ambience[])
 Ambience = one2more(business_bars$Ambience)
 
 
@@ -136,7 +118,6 @@ RestaurantsPriceRange2 = sapply(business_bars$RestaurantsPriceRange2,string2bool
 
 
 # Alcohol ####
-business_bars$Alcohol %>% unique
 Alcohol = sapply(business_bars$Alcohol,string2bool)
 Alcohol = sapply(Alcohol,function(x){
   if(is.na(x) == FALSE){
@@ -153,9 +134,8 @@ Alcohol = sapply(Alcohol,function(x){
  
 })
 names(Alcohol) = NULL
-Alcohol
+
 # RestaurantsAttire ####
-business_bars$RestaurantsAttire %>% unique
 RestaurantsAttire =  sapply(business_bars$RestaurantsAttire,function(x){
   if(is.na(x) == FALSE){
     if(str_detect(x,pattern = 'none') == TRUE){
@@ -174,11 +154,9 @@ RestaurantsAttire =  sapply(business_bars$RestaurantsAttire,function(x){
 })
 names(RestaurantsAttire) = NULL
 RestaurantsAttire[RestaurantsAttire=='dressy'] = 'formal'
-RestaurantsAttire %>% unique()
 
 
 # NoiseLevel ####
-business_bars$NoiseLevel %>% unique
 NoiseLevel =  sapply(business_bars$NoiseLevel,function(x){
   if(is.na(x) == FALSE){
     if(str_detect(x,pattern = 'very_loud') == TRUE){
@@ -196,48 +174,35 @@ NoiseLevel =  sapply(business_bars$NoiseLevel,function(x){
   
 })
 names(NoiseLevel) = NULL
-NoiseLevel
+
 # ByAppointmentOnly
-business_bars$ByAppointmentOnly %>% unique
 ByAppointmentOnly=sapply(business_bars$ByAppointmentOnly,string2bool)
 
 #GoodForMeal ####
-# I applied lm to every factor and I found that dinner and brunch are significant under 0.05 
-business_bars$GoodForMeal%>% unique()
+# We applied lm to every factor and we found that dinner and brunch are significant under 0.05 
 GoodForMeal=one2more(business_bars$GoodForMeal,from = 3)
-GoodForMeal
 
 # Music ####
-# I applied lm to every factor and I found dj and jukebox are significant.
+# We applied lm to every factor and we found dj and jukebox are significant.
 business_bars$Music %>% unique
 Music = one2more(business_bars$Music ,from =3)
 Music
 
 
 # BestNights ####
-# I don't think this is significant. Maybe Friday is more significant.
-business_bars$BestNights %>% unique
 BestNights = one2more(business_bars$BestNights,from = 3)
-BestNights
 
 
 # Merge the dataset ####
 names(business_bars_cleaned)
 business_bars_cleaned = business_bars_cleaned[,c('business_id','state','stars',
                                                  goodAttributes)]
-#business_bars_cleaned=cbind(business_bars_cleaned,BusinessParking,RestaurantsPriceRange2,
- #     WiFi,Ambience,Alcohol,RestaurantsAttire,
- #     NoiseLevel,ByAppointmentOnly,GoodForMeal,NoiseLevel,BestNights)
 business_bars_cleaned = cbind(business_bars_cleaned,BusinessParking,
                                 WiFi,Ambience,RestaurantsPriceRange2,Alcohol,
                                 RestaurantsAttire,NoiseLevel,ByAppointmentOnly,
                                 GoodForMeal$dinner,GoodForMeal$brunch,Music$dj,
                                 Music$jukebox,BestNights$friday)
-class(business_bars$stars)
-#lm(stars~.,business_bars)
-#rm(business_bars,BusinessParking)
-dim(business_bars_cleaned)
-# classification ####
+
 # Remove columns with linear regression p-value > 0.1
 x = names(business_bars_cleaned)[-c(1,3)]
 p=sapply(x, function(name){
@@ -249,8 +214,8 @@ which(p>0.1) # state  RestaurantsReservations RestaurantsGoodForGroups
 
 business_bars_cleaned[,names(which(p>0.1))] = NULL
 
-# do linear regression on each variable
 
+# Convert character / logical variables to factors.
 for(attr in which(sapply(business_bars_cleaned[1,],class) == 'character') %>% names %>% .[-1]){
   business_bars_cleaned[,attr] = as.factor(business_bars_cleaned[,attr])
 }
@@ -258,30 +223,19 @@ complete.cases(business_bars_cleaned)
 for(attr in which(sapply(business_bars_cleaned[1,],class) == 'logical') %>% names %>% .[-1]){
   business_bars_cleaned[,attr] = as.factor(business_bars_cleaned[,attr])
 }
-#lm(stars~.,business_bars_cleaned[1:100,-c(1,26)])
-# 26
 
+# Keep variables with less than half NA's and remove the rest
 num_na =data.frame(attr = names(business_bars_cleaned),
                    missing = sapply( names(business_bars_cleaned),function(x){
                      is.na(business_bars_cleaned[,x]) %>% sum
                    }))
 good_variables = num_na$attr[num_na$missing/nrow(business_bars_cleaned)<0.5]
 good_variables = good_variables[-c(1)]
-#row_na =sapply( 1:nrow(business_bars_cleaned),function(x){
-#                      is.na(business_bars_cleaned[x,]) %>% sum
- #                   })
-#good_obs = which(row_na/ncol(business_bars_cleaned)<0.8)
 
 
 business_bars_cleaned$star_level = ifelse(business_bars_cleaned$stars>=4,"high",'low')
 business_bars_cleaned = business_bars_cleaned[,c('star_level',good_variables)]
-# write.csv(business_bars_cleaned,'/Users/miaoxinran/Documents/WISC/威斯康星课程/628/Module\ 3/xm_pre/business_bars_cleaned.csv')
+  
+# write.csv(../Data/business_bars_cleaned.csv')
 
-ggplot(business_bars_cleaned, aes(x=stars))+
-  geom_histogram(aes(y=..count..), binwidth = 0.5, center=1,
-                color = 'white',fill = 'deepskyblue3') +
-  theme_bw()+
-  theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.5))+
-  labs(x = 'Stars',y = 'Counts',
-       title = 'Histogram of Review Stars')
 
