@@ -291,3 +291,83 @@ p28 = ggplot(beer, aes(x=beer,y=Freq))+
 
 
 (p21+p22)/(p23+p24)/(p25+p26)/(p27+p28)
+
+
+
+
+
+
+# Plots about variables in bars.csv
+library(gridExtra)
+business_bars_cleaned = read.csv("../Data/business_bars_cleaned.csv")
+
+ggplot(business_bars_cleaned, aes(x=stars))+
+  geom_histogram(aes(y=..count..), binwidth = 0.5, center=1,
+                 color = 'white',fill = 'deepskyblue3') +
+  theme_bw()+
+  theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.5))+
+  labs(x = 'Stars',y = 'Counts',
+       title = 'Histogram of Review Stars')
+
+par(mfrow = c(1,3))
+# HasTV
+good_rows = which(is.na(business_bars_cleaned[,'HasTV']) == FALSE)
+p1=business_bars_cleaned %>% .[good_rows,] %>% ggplot()+
+  geom_boxplot(aes(x = HasTV,y = stars),color = 'deepskyblue3') + 
+  theme_bw()
+
+# NoiseLevel
+grid.arrange(p1,p2)
+good_rows = which(is.na(business_bars_cleaned[,'NoiseLevel']) == FALSE)
+p2=business_bars_cleaned %>% .[good_rows,] %>% ggplot()+
+  geom_boxplot(aes(x = NoiseLevel,y = stars),color = 'deepskyblue3') + 
+  theme_bw()
+# BusinessAcceptsCreditCards
+good_rows = which(is.na(business_bars_cleaned[,'BusinessAcceptsCreditCards']) == FALSE)
+p3=business_bars_cleaned %>% .[good_rows,] %>% ggplot()+
+  geom_boxplot(aes(x = BusinessAcceptsCreditCards,y = stars),color = 'deepskyblue3') + 
+  theme_bw()
+
+# RestaurantsDelivery
+good_rows = which(is.na(business_bars_cleaned[,'RestaurantsDelivery']) == FALSE)
+p4=business_bars_cleaned %>% .[good_rows,] %>% ggplot()+
+  geom_boxplot(aes(x = RestaurantsDelivery,y = stars),color = 'deepskyblue3') + 
+  theme_bw()
+
+# Parking
+good_rows = which(is.na(business_bars_cleaned[,'BusinessParking']) == FALSE)
+p5=business_bars_cleaned %>% .[good_rows,] %>% ggplot()+
+  geom_boxplot(aes(x = BusinessParking,y = stars),color = 'deepskyblue3') + 
+  theme_bw()
+
+#Price
+
+good_rows = which(is.na(business_bars_cleaned[,'RestaurantsPriceRange2']) == FALSE)
+p6=business_bars_cleaned %>% .[good_rows,] %>% ggplot()+
+  geom_boxplot(aes(x = RestaurantsPriceRange2,y = stars),color = 'deepskyblue3') + 
+  theme_bw()
+
+# intimate
+good_rows = which(is.na(business_bars_cleaned[,'intimate']) == FALSE)
+p7=business_bars_cleaned %>% .[good_rows,] %>% ggplot()+
+  geom_boxplot(aes(x = intimate,y = stars),color = 'deepskyblue3') + 
+  theme_bw()
+
+good_rows = which(is.na(business_bars_cleaned[,'hipster']) == FALSE)
+p8=business_bars_cleaned %>% .[good_rows,] %>% ggplot()+
+  geom_boxplot(aes(x = hipster,y = stars),color = 'deepskyblue3') + 
+  theme_bw()
+
+good_rows = which(is.na(business_bars_cleaned[,'classy']) == FALSE)
+p9=business_bars_cleaned %>% .[good_rows,] %>% ggplot()+
+  geom_boxplot(aes(x = classy,y = stars),color = 'deepskyblue3') + 
+  theme_bw()
+
+good_rows = which(is.na(business_bars_cleaned[,'trendy']) == FALSE)
+p10=business_bars_cleaned %>% .[good_rows,] %>% ggplot()+
+  geom_boxplot(aes(x = trendy,y = stars),color = 'deepskyblue3') + 
+  theme_bw()
+grid.arrange(p1,p2,p3,p4,layout_matrix = matrix(1:4,nrow = 2))
+grid.arrange(p5,p6,layout_matrix = matrix(1:2,nrow = 1))
+grid.arrange(p7,p8,p9,p10,layout_matrix = matrix(1:4,nrow = 2))
+
