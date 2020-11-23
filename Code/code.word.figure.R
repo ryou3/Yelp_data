@@ -9,16 +9,19 @@ library(ggplot2)
 #devtools::install_github("thomasp85/patchwork")
 library(patchwork)
 
-review_city <- jsonlite::stream_in(file("review_city.json"),pagesize = 942027)
+#read in data
+review_city = jsonlite::stream_in(file("review_city.json"),pagesize = 942027)
 review_city = as.data.frame(review_city)
 
 bar = read.csv("bars.csv")
 nrow(bar)
 
+#filter out reviews that belong to bars
 review = review_city %>%
   filter(business_id  %in% bar$business_id)
 nrow(review)
 
+#remove symbols in the texts and segment to words
 review$index = 1:nrow(review)
 engine = worker()
 temp = tolower(review$text)
@@ -38,6 +41,7 @@ temp = gsub("!"," ", temp, fixed = TRUE)
 temp = gsub("[^a-zA-Z]"," ",temp)
 segwords = llply(temp, segment, engine)
 
+#count wrod frequency 
 wordsFreq = data.frame(table(unlist(segwords)))
 wordsFreq1 = data.frame(lapply(wordsFreq, as.character), stringsAsFactors=FALSE)                      
 wordsFreq2 = wordsFreq1[-which(nchar(wordsFreq1[,1])<4),]
@@ -47,11 +51,7 @@ data = wordsFreq4[1:500,]
 #write.table(wordsFreq4, "wordsfreq.sorted")
 #write.table(wordsFreq, "wordsfreq")
 
-
-word = cbind(review$stars, segwords)
-wordsFreq4 %>%
-   filter(Var1 == "old")
-
+#extract important words and compare them with stars
 #great
 great = c()
 for (i in 1:length(segwords)) {
@@ -84,8 +84,6 @@ for (i in 1:length(segwords)) {
 p4 = ggplot(favorite1, aes(x=favorite,y=Freq))+
   geom_bar(stat="identity", fill = "deepskyblue3")
 
-
-
 #disappointing
 disappointing = c()
 for (i in 1:length(segwords)) {
@@ -93,7 +91,6 @@ for (i in 1:length(segwords)) {
   }else{next}}; disappointing1 = data.frame(table(disappointing))
 p5 = ggplot(disappointing1, aes(x=disappointing,y=Freq))+
   geom_bar(stat="identity", fill = "cadetblue3")
-
 
 #complaint
 complaint = c()
@@ -129,7 +126,6 @@ for (i in 1:length(segwords)) {
 p9 = ggplot(wait1, aes(x=wait,y=Freq))+
   geom_bar(stat="identity", fill = "deepskyblue3")
 
-
 #reservation
 reservation = c()
 for (i in 1:length(segwords)) {
@@ -137,7 +133,6 @@ for (i in 1:length(segwords)) {
   }else{next}}; reservation1 = data.frame(table(reservation))
 p10 = ggplot(reservation1, aes(x=reservation,y=Freq))+
   geom_bar(stat="identity", fill = "deepskyblue3")
-
 
 #expensive
 expensive = c()
@@ -172,7 +167,6 @@ p14 = ggplot(space1, aes(x=space,y=Freq))+
   geom_bar(stat="identity", fill = "deepskyblue3")
 
 (p9+p10)/(p11+p12)/(p13+p14)
-
 
 #pizza
 pizza = c()
@@ -223,7 +217,6 @@ p20 = ggplot(delicious1, aes(x=delicious,y=Freq))+
   geom_bar(stat="identity", fill = "deepskyblue3")
 
 (p15+p16)/(p17+p18)/(p19+p20)
-
 
 #scotch 
 scotch  = c()
@@ -288,7 +281,6 @@ for (i in 1:length(segwords)) {
   }else{next}}; beer = data.frame(table(beer ))
 p28 = ggplot(beer, aes(x=beer,y=Freq))+
   geom_bar(stat="identity", fill = "deepskyblue3")
-
 
 (p21+p22)/(p23+p24)/(p25+p26)/(p27+p28)
 
