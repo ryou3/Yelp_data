@@ -256,6 +256,13 @@ good_variables = good_variables[-c(1)]
 
 business_bars_cleaned$star_level = ifelse(business_bars_cleaned$stars>=4,"high",'low')
 business_bars_cleaned = business_bars_cleaned[,c('star_level',good_variables)]
+
+business_bars_cleaned$RestaurantsPriceRange2 = as.factor(business_bars_cleaned$RestaurantsPriceRange2)
+business_bars_cleaned = business_bars_cleaned %>% mutate(
+  hours.time=business_bars$hours.time,
+  happyhour=business_bars$happyhour
+)
+
   
 # write.csv(../Data/business_bars_cleaned.csv')
 
