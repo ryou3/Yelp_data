@@ -191,7 +191,25 @@ Music
 
 # BestNights ####
 BestNights = one2more(business_bars$BestNights,from = 3)
-
+#hour.day ####
+hour.day = function(x){
+  if((!is.na(x)) & (x!= '')){
+    y = str_extract_all(x, "[0-9]{1,2}:[0-9]{1,2}") %>% unlist
+    hour = 0
+    for (i in seq(1,length(y),2)) {
+      if((!is.na(y[i+1])) & (!is.na(y[i])) ){
+        today = strptime(y[i+1], "%M:%S") - strptime(y[i], "%M:%S")
+        if(today < 0){today = today+24}
+        hour = hour+today
+      }else{hour=NA}
+    }
+  }else(hour = NA)
+  
+  return(hour) 
+}
+business_bars$hours.time = sapply(business_bars$hours,hour.day) %>% unlist
+#Happy hour####
+business_bars$happyhour =as.logical(business_bars$HappyHour)
 
 # Merge the dataset ####
 names(business_bars_cleaned)
@@ -201,7 +219,8 @@ business_bars_cleaned = cbind(business_bars_cleaned,BusinessParking,
                                 WiFi,Ambience,RestaurantsPriceRange2,Alcohol,
                                 RestaurantsAttire,NoiseLevel,ByAppointmentOnly,
                                 GoodForMeal$dinner,GoodForMeal$brunch,Music$dj,
-                                Music$jukebox,BestNights$friday)
+                                Music$jukebox,BestNights$friday,
+                              business_bars$hours.time,business_bars$happyhour)
 
 # Remove columns with linear regression p-value > 0.1
 x = names(business_bars_cleaned)[-c(1,3)]
