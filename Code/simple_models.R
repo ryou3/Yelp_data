@@ -1,7 +1,6 @@
 library(MASS)
 
 business_bars_cleaned = read.csv("business_bars_cleaned.csv")
-business_bars_cleaned$RestaurantsPriceRange2 = as.factor(business_bars_cleaned$RestaurantsPriceRange2)
 
 # 1. linear regression model ####
 mod1_0.5 = lm(stars~.,business_bars_cleaned[,good_variables])
