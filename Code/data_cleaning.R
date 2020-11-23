@@ -199,6 +199,7 @@ hour.day = function(x){
     for (i in seq(1,length(y),2)) {
       if((!is.na(y[i+1])) & (!is.na(y[i])) ){
         today = strptime(y[i+1], "%M:%S") - strptime(y[i], "%M:%S")
+        today = as.numeric(today)
         if(today < 0){today = today+24}
         hour = hour+today
       }else{hour=NA}
@@ -207,6 +208,7 @@ hour.day = function(x){
   
   return(hour) 
 }
+ 
 business_bars$hours.time = sapply(business_bars$hours,hour.day) %>% unlist
 #Happy hour####
 business_bars$happyhour =as.logical(business_bars$HappyHour)
