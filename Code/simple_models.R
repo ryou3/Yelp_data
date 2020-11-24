@@ -22,14 +22,21 @@ m2 = polr(as.factor(stars)~.,df)
 m3 = stepAIC(m2,k=2)
 summary(m3)
 
-subset2 = c('stars','BikeParking','BusinessParking',#'RestaurantsDelivery',
-            'HasTV' ,'NoiseLevel','RestaurantsPriceRange2')
-df2$RestaurantsPriceRange2 = as.factor(df2$RestaurantsPriceRange2)
-df2 = na.omit(business_bars_cleaned[,subset2])
-
 m4 = polr(as.factor(stars)~.,df2,Hess = TRUE)
 summary(m4)
 step(m4,k=2)
+
+
+subset5 = c('stars','BikeParking','BusinessParking',
+            'HasTV' ,'NoiseLevel','RestaurantsPriceRange2',
+            'happyhour','hours.time')
+df5 = na.omit(business_bars_cleaned[,subset5])
+df5$RestaurantsPriceRange2 = as.factor(df5$RestaurantsPriceRange2)
+m5 = polr(as.factor(stars)~.,df5,Hess = TRUE,method = 'probit')
+summary(m5)
+step(m5,k=2) # the same as m5
+
+save(m5,file='../Data/model.RData') # save the model to Data folder
 
 
 # Functions to summarise the model
@@ -43,4 +50,3 @@ inference = function(model){
               ci=ci, # confidence intervals
               odds = odds)) # odds ratios
 }
-inference(m4)
