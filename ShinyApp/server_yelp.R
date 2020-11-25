@@ -5,16 +5,17 @@ server = shinyServer(function(input, output) {
     a = predict(model,newdata = data.frame(BikeParking =as.logical(x[1]),
                                           HasTV = as.logical(x[2]),
                                           NoiseLevel = x[3],
-                                           hours.time = as.numeric(x[4])))
+                                           hours.time = as.numeric(x[4]),
+                                          review_count = as.numeric(x[5])))
     return(a)
   }
   res <- reactive({
-    as.character(f(c(input$HasTV,input$BikeParking,input$NoiseLevel,input$hours.time)))
+    as.character(f(c(input$HasTV,input$BikeParking,input$NoiseLevel,input$hours.time,input$review_count)))
   })
   output$res <- renderPrint({cat(res())})
   
   suggestion = function(x){
-    y = ''
+    y = 'It\'s always a great idea to get more reviews from your customer!\n'
     if(x[1] == 'FALSE'){
       y = paste0(y,'Try to add BikeParking.\n')
     }
