@@ -4,6 +4,7 @@ library(gridExtra)
 library(car)
 library(broom)
 library(PResiduals)
+library(sure)
 
 # Load th models and data.
 source("data_cleaning.R")
