@@ -12,31 +12,18 @@ summary(mod2_0.5)
 # 2. ordered logistic regression model ####
 m1 = polr(as.factor(stars)~.,business_bars_cleaned[,-1])
 summary(m1)
+step(m1,k=2)
 
-subset = c('stars','BusinessAcceptsCreditCards' ,
-             'BikeParking' ,'BusinessParking','Alcohol',
-             'RestaurantsDelivery', 'HasTV' ,'NoiseLevel')
-df = na.omit(business_bars_cleaned[,subset])
-m2 = polr(as.factor(stars)~.,df)
-
-m3 = stepAIC(m2,k=2)
-summary(m3)
-
-m4 = polr(as.factor(stars)~.,df2,Hess = TRUE)
-summary(m4)
-step(m4,k=2)
-
-
-subset5 = c('stars','BikeParking','BusinessParking',
+subset = c('stars','BikeParking','BusinessParking',
             'HasTV' ,'NoiseLevel','RestaurantsPriceRange2',
-            'happyhour','hours.time')
-df5 = na.omit(business_bars_cleaned[,subset5])
-df5$RestaurantsPriceRange2 = as.factor(df5$RestaurantsPriceRange2)
-m5 = polr(as.factor(stars)~.,df5,Hess = TRUE,method = 'probit')
-summary(m5)
-step(m5,k=2) # the same as m5
+            'happyhour','hours.time','review_count')
+df = na.omit(business_bars_cleaned[,subset])
+df$RestaurantsPriceRange2 = as.factor(df$RestaurantsPriceRange2)
+m = polr(as.factor(stars)~.,df,Hess = TRUE,method = 'probit')
+summary(m)
+model = step(m5,k=2) 
 
-save(m5,file='../Data/model.RData') # save the model to Data folder
+save(model,file='../Data/model.RData') # save the model to Data folder
 
 
 # Functions to summarise the model
@@ -50,3 +37,5 @@ inference = function(model){
               ci=ci, # confidence intervals
               odds = odds)) # odds ratios
 }
+
+inferece(model)
