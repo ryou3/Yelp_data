@@ -263,6 +263,7 @@ business_bars_cleaned = business_bars_cleaned %>% mutate(
   happyhour=business_bars$happyhour
 )
 
+business_bars_cleaned$review_count = business_bars$review_count
   
 # write.csv(../Data/business_bars_cleaned.csv')
 
