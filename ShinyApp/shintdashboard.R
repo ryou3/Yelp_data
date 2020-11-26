@@ -1,3 +1,5 @@
+if(!require("LDAvis")) install.packages("LDAvis")
+devtools::install_github("cpsievert/LDAvis")
 library(shiny)
 library(LDAvis)
 library(shinydashboard)
