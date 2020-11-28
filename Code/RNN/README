@@ -1,0 +1,3 @@
+## This is a general RNN frame code with use of lstm, a kind of method to deal better with complicated RNN
+## In fact, it does deal with the reviews like data after using some pre trained dataset
+## However, first of all, it is costly for personal computer to do this. Besides, the reviews also have many words do not appear in the pre trained dataset.
