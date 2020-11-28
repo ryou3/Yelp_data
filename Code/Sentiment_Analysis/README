@@ -1,0 +1,5 @@
+## this  file contains the codes doing the following things
+### First, read the given data and generate the selected theme, which is "Bars" here, and select corresponding reviews.
+### Second, in order to find the most frequent words, especially nounces for seperated parts, which are price, service, flavour, and specificfoods,
+### we first deleted the functional words, then with pre trained positive and negative words, we finally got the number of tendency words for each words
+### Last, do chi-test and report the result to a csv file
