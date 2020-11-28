@@ -1,6 +1,6 @@
 ## this file contains the used csv in precise advise
-## inte.csv contains all reviews with corresponding stars after deleted functional words
-## reviews.csv contains original reviews, stars, business ID's
+## inte.csv contains all reviews with corresponding stars after deleted functional words (too big to upload)
+## reviews.csv contains original reviews, stars, business ID's (too big to upload)
 ## WordCount.csv contains the overall results of all parts of words
 ## business_pos_neg.csv contains all the selected words with count of sentiment words
-## suggestOrNot.csv contains the final results for all merchant
+## suggestOrNot.csv contains the final results for all merchant 
