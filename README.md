@@ -11,6 +11,6 @@ This repository utilizes Yelp open data to draw insight on ways to improve bars'
 
 * `ShinyApp`: Contains the code to produce shiny app in R.
 
-Our [web-based app](https://xmiao.shinyapps.io/ShinyApp/) implements our proposed model. 
+Our [web-based app](https://xmiao.shinyapps.io/ImproveYelpRatings/) implements our proposed model. 
 
 
